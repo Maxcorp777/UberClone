@@ -116,6 +116,14 @@ const handleRegister = async () => {
         <TouchableOpacity style={styles.button} onPress={handleRegister} activeOpacity={0.8}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
+        <TouchableOpacity 
+          onPress={() => navigation.navigate('Login')} 
+          style={styles.loginLink}
+        >
+          <Text style={styles.loginLinkText}>
+            ¿Ya tienes una cuenta? <Text style={styles.loginLinkBold}>Inicia sesión aquí</Text>
+          </Text>
+      </TouchableOpacity>
 
         {/* Términos Legales sutiles al pie */}
         <Text style={styles.termsText}>
@@ -206,5 +214,21 @@ const styles = StyleSheet.create({
     marginTop: 24, 
     lineHeight: 18,
     paddingHorizontal: 20
-  }
+  },
+
+
+  
+  loginLink: {
+    marginTop: 25,
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  loginLinkText: {
+    color: '#64748B', // Gris suave
+    fontSize: 14,
+  },
+  loginLinkBold: {
+    fontWeight: 'bold',
+    color: '#6D28D9', // El morado eléctrico oficial de SKIP
+  },
 });

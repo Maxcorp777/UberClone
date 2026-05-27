@@ -264,7 +264,7 @@ export default function HomeScreen() {
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.menuBtn} onPress={() => navigation.navigate('History')}>
-            <Text style={styles.menuBtnText}>📜 History</Text>
+            <Text onPress={() => navigation.navigate('History')} style={styles.menuBtnText}>📜 History</Text>
           </TouchableOpacity>
         </View>
       )}

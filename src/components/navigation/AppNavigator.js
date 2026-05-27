@@ -7,7 +7,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import HomeScreen from '../screens/HomeScreen';
 import PaymentScreen from '../screens/PaymentScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import LoginScreen from '../screens/LoginScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import HistoryScreen from '../screens/HistoryScreen'
+
 
 const Stack = createNativeStackNavigator();
 
@@ -48,11 +51,13 @@ export default function AppNavigator() {
       <Stack.Navigator initialRouteName={initialRoute}>
         
         {/* Pantalla de Registro */}
-        <Stack.Screen name="Register" component={RegisterScreen} options={{ title: 'Create Account' }} />
+        <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         
         {/* Pantallas Principales de la aplicación */}
-        <Stack.Screen name="SKIP.com" component={HomeScreen} />
+        <Stack.Screen name="SKIP.com" component={HomeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Payment" component={PaymentScreen} />
+        <Stack.Screen name="History" component={HistoryScreen} options={{ headerShown: false }} />
         
         {/* Pantalla del Perfil de Usuario */}
         <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'My Profile' }} />

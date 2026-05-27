@@ -9,6 +9,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 // APRENDIZAJE: Importamos el modelo de Usuario para interactuar con la colección de Atlas
 const User = require('./models/User');
+const Trip = require('./models/Trip');
 
 const app = express();
 
@@ -80,6 +81,84 @@ app.get('/api/users/profile/:id', async (req, res) => {
   }
 });
 
+// ==========================================
+// 3. ENDPOINT: INICIAR SESIÓN (HTTP POST)
+// ==========================================
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // 1. Buscamos si el correo existe en la base de datos
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'El correo electrónico no está registrado.' });
+    }
+
+    // 2. Validamos si la contraseña coincide (guardada plana con fines académicos)
+    if (user.password !== password) {
+      return res.status(401).json({ message: 'Contraseña incorrecta.' });
+    }
+
+    // 3. Si todo está correcto, respondemos con éxito y mandamos el perfil del usuario
+    res.status(200).json({
+      message: '¡Inicio de sesión exitoso!',
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Error en el login:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+//------------------------------------------------------------------------- GET Y POST DE LOS VIAJES
+// Obtener historial de viajes de un usuario específico
+app.get('/api/trips/history/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    
+    // Busca los viajes del usuario y los ordena del más nuevo al más viejo
+    const history = await Trip.find({ userId }).sort({ createdAt: -1 });
+    
+    res.status(200).json(history);
+  } catch (error) {
+    console.error('❌ Error al obtener historial:', error);
+    res.status(500).json({ message: 'Error al obtener los viajes' });
+  }
+});
+
+// Ruta para GUARDAR el viaje en la base de datos (POST)
+app.post('/api/trips/complete', async (req, res) => {
+  try {
+    const { userId, distance, duration, cost } = req.body;
+
+    // Validación para que no entren datos vacíos a la DB
+    if (!userId || !distance || !duration || !cost) {
+      return res.status(400).json({ message: 'Faltan datos obligatorios del viaje.' });
+    }
+
+    // Creamos el nuevo documento del viaje con el ID del usuario
+    const newTrip = new Trip({
+      userId,
+      distance,
+      duration,
+      cost
+    });
+
+    // Guardamos directo en MongoDB Atlas
+    await newTrip.save();
+
+    res.status(201).json({ message: '¡Viaje guardado en la DB con éxito!', trip: newTrip });
+  } catch (error) {
+    console.error('❌ Error al guardar el viaje en la DB:', error);
+    res.status(500).json({ message: 'Error interno al guardar en la base de datos' });
+  }
+});
+//------------------------------------------------------------------------------------------------------------
 
 // COMENTARIO DIDÁCTICO: Endpoint de prueba rápido para verificar que el backend responde
 app.get('/api/test', (req, res) => {
