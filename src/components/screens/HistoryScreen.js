@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { API_URL } from '../navigation/Config' // Trae la IP centralizada
+
+
 export default function HistoryScreen({ navigation }) {
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,7 +17,7 @@ export default function HistoryScreen({ navigation }) {
     try {
       const userId = await AsyncStorage.getItem('userId'); // Recuperamos el ID del usuario logueado
       
-      const response = await fetch(`http://192.168.1.73:5000/api/trips/history/${userId}`);
+      const response = await fetch(`${API_URL}/trips/history/${userId}`);
       const data = await response.json();
       
       setTrips(data);

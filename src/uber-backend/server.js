@@ -160,7 +160,7 @@ app.post('/api/trips/complete', async (req, res) => {
 });
 //------------------------------------------------------------------------------------------------------------
 
-// COMENTARIO DIDÁCTICO: Endpoint de prueba rápido para verificar que el backend responde
+// `Endpoint de prueba rápido para verificar que el backend responde
 app.get('/api/test', (req, res) => {
   res.json({ message: 'Backend is working perfectly!' });
 });

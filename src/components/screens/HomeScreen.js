@@ -3,15 +3,15 @@ import React, { useRef, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { View, StyleSheet, Text, TouchableOpacity, Alert, PermissionsAndroid } from 'react-native';
-// 🗺️ Componentes nativos del mapa de Google y trazador de rutas
+// Componentes nativos del mapa de Google y trazador de rutas
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-// 🔍 Buscador de sugerencias predictivas de direcciones
+// Buscador de sugerencias predictivas de direcciones
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-// 📦 Redux Hooks para despachar los datos globales a la pasarela de pagos
+// Redux Hooks para despachar los datos globales a la pasarela de pagos
 import { useDispatch } from 'react-redux';
 import { setTripData } from '../../redux/slices/tripSlice';
-// 🧭 Navegación nativa entre las pantallas de SKIP
+// Navegación nativa entre las pantallas de SKIP
 import { useNavigation } from '@react-navigation/native';
 
 
@@ -124,8 +124,8 @@ export default function HomeScreen() {
           setIsTripRunning(false);
           setDriverLocation(null);
           
-          Alert.alert('Arrived!', 'Your SKIP driver has reached the destination.', [
-            { text: 'Proceed to Payment', onPress: () => navigation.navigate('Payment') }
+          Alert.alert('LLegamos!', 'Tu SKIP driver ha finalizado el viaje', [
+            { text: 'Procede con pago', onPress: () => navigation.navigate('Payment') }
           ]);
         }
       }, 500); // Velocidad del refresco de animación (Cada 500 milisegundos)
@@ -134,7 +134,7 @@ export default function HomeScreen() {
     return () => clearInterval(timer);
   }, [isTripRunning, routePoints]);
 
-  // 🚀 FUNCIÓN: Dispara la solicitud del viaje, guarda en Redux e inicia la telemetría en tiempo real
+  //FUNCIÓN: Dispara la solicitud del viaje, guarda en Redux e inicia la telemetría en tiempo real
   const startSkipRide = () => {
     if (!destination) return;
 
@@ -161,7 +161,7 @@ export default function HomeScreen() {
       {!isTripRunning && (
         <GooglePlacesAutocomplete
           placeholder="Que nos depara el destino hoy?"
-          fetchDetails={true} // 🔥 SOLUCIÓN CRÍTICA: Obliga a Google a traer la data detallada de la ubicación
+          fetchDetails={true} // Obliga a Google a traer la data detallada de la ubicación
           enablePoweredByContainer={false}
           nearbyPlacesAPI="GooglePlacesSearch"
           debounce={400}
@@ -196,7 +196,7 @@ export default function HomeScreen() {
         />
       )}
 
-      {/* 🗺️ ENTORNO DEL MAPA INTERACTIVO NATIVO DE GOOGLE */}
+      {/*ENTORNO DEL MAPA INTERACTIVO NATIVO DE GOOGLE */}
       <MapView
         ref={mapRef}
         provider={PROVIDER_GOOGLE}
@@ -218,7 +218,7 @@ export default function HomeScreen() {
         {/* Pin visual encima del destino */}
         {destination && <Marker coordinate={destination} pinColor="#6D28D9" />}
 
-        {/* 🏍️/🚗 PIN ANIMADO: El conductor aproximándose en la ruta */}
+        {/* ICONO DE SIMULACION */}
         {driverLocation && (
           <Marker coordinate={driverLocation}>
             <View style={styles.driverIconCircle}>
@@ -246,10 +246,10 @@ export default function HomeScreen() {
         )}
       </MapView>
 
-      {/* 🧭 MENÚ SUPERIOR DE ACCESO RÁPIDO EN FILA (PERFIL E HISTORIAL) */}
+      {/*MENÚ SUPERIOR*/}
       {!isTripRunning && (
         <View style={styles.topMenuRow}>
-          {/* COMENTARIO DIDÁCTICO: Enviamos el ID recuperado de AsyncStorage como parámetro de navegación */}
+          {/*Enviamos el ID recuperado de AsyncStorage como parámetro de navegación */}
           <TouchableOpacity 
             style={styles.menuBtn} 
             onPress={() => {
@@ -269,7 +269,7 @@ export default function HomeScreen() {
         </View>
       )}
 
-      {/* 🚨 HUD PANEL: SEGUIMIENTO DE VIAJE EN TIEMPO REAL ACTIVO */}
+      {/* SEGUIMIENTO DE VIAJE EN TIEMPO REAL ACTIVO */}
       {isTripRunning && (
         <View style={styles.trackingHud}>
           <Text style={styles.hudTitle}>✨ SKIP Ride Active</Text>
@@ -279,7 +279,7 @@ export default function HomeScreen() {
         </View>
       )}
 
-      {/* 💳 HOJA CONTROL INFERIOR PREMIUM MINIMALISTA */}
+      {/* PANEL INFERIOR PARA ELEGIR EL VIAJE */}
       {showPanel && !isTripRunning && (
         <View style={styles.bottomCardSheet}>
           
@@ -295,14 +295,14 @@ export default function HomeScreen() {
             <Text style={styles.closeSheetText}>✕</Text>
         </TouchableOpacity>
 
-          <Text style={styles.sheetTitle}>Trip Details Summary</Text>
+          <Text style={styles.sheetTitle}>Detalles del viaje</Text>
           
           <Text style={styles.priceText}>
             {finalPrice ? finalPrice.toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }) : '$0'}
           </Text>
 
           {/* Grid Selector: Clase de Vehículo */}
-          <Text style={styles.sectionLabelTitle}>Select Vehicle Class</Text>
+          <Text style={styles.sectionLabelTitle}>Selecciona el tipo de Vehiculo</Text>
           <View style={styles.buttonsRowGrid}>
             {['Economy', 'XL', 'Premium'].map((type) => (
               <TouchableOpacity
@@ -318,10 +318,10 @@ export default function HomeScreen() {
           </View>
 
           {/* Grid Selector: Método de Pago */}
-          <Text style={styles.sectionLabelTitle}>Select Payment Method</Text>
+          <Text style={styles.sectionLabelTitle}>Elige el metodo de pago</Text>
           <View style={styles.optionsRowGridContainer}>
             {[
-              { id: 'Cash', label: '💵 Cash' },
+              //{ id: 'Cash', label: '💵 Cash' },
               { id: 'Card', label: '💳 Card' }
             ].map((method) => (
               <TouchableOpacity
@@ -336,7 +336,7 @@ export default function HomeScreen() {
 
           {/* Botón Principal de Envío */}
           <TouchableOpacity style={styles.mainActionBtn} onPress={startSkipRide}>
-            <Text style={styles.mainActionBtnText}>Confirm SKIP Ride</Text>
+            <Text style={styles.mainActionBtnText}>Confirmar Viaje</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -344,8 +344,6 @@ export default function HomeScreen() {
   );
 }
 
-
-// 🎨 HOJA DE ESTILOS PREMIUM MODULADOS (Claros con acento Morado SKIP #6D28D9)
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
@@ -356,7 +354,6 @@ const styles = StyleSheet.create({
     flex: 1 
   },
   
-  // 🧭 Menú flotante superior en fila (Profile / History)
   topMenuRow: { 
     position: 'absolute', 
     top: 130, 
@@ -385,7 +382,6 @@ const styles = StyleSheet.create({
     color: '#475569' 
   },
 
-  // 🏍️/🚗 Ícono circular flotante del conductor animado
   driverIconCircle: { 
     backgroundColor: '#FFFFFF', 
     padding: 6, 
@@ -395,7 +391,6 @@ const styles = StyleSheet.create({
     elevation: 5 
   },
 
-  // 🚨 HUD Panel de viaje activo en tiempo real
   trackingHud: { 
     position: 'absolute', 
     bottom: 40, 
@@ -423,7 +418,6 @@ const styles = StyleSheet.create({
     marginTop: 4 
   },
 
-  // 💳 Hoja de control inferior (Tarjeta Blanca del resumen)
   bottomCardSheet: { 
     position: 'absolute', 
     bottom: 0, 
@@ -435,8 +429,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24, 
     paddingTop: 24, 
     paddingBottom: 34, 
-    zIndex: 999,          // 🔥 Fuerza la capa en sistemas híbridos
-    elevation: 24,        // 🔥 SOLUCIÓN CRÍTICA: Rompe el bloqueo de clics en Android
+    zIndex: 999,         
+    elevation: 24,       
     shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
@@ -454,7 +448,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F5F9', 
     justifyContent: 'center', 
     alignItems: 'center',
-    zIndex: 1000,         // 🔥 Asegura interacción independiente de la capa base
+    zIndex: 1000,
     elevation: 5 
   },
   
@@ -543,14 +537,13 @@ const styles = StyleSheet.create({
   },
 });
 
-// 🔍 ESTILOS DESACOPLADOS: Control visual del motor de Google Places Autocomplete
 const searchStyles = {
   container: { 
     position: 'absolute', 
     top: 60, 
     left: 0, 
     right: 0, 
-    zIndex: 99999 // Mantiene la barra predictiva por encima de cualquier otro mapa nativo
+    zIndex: 99999 
   },
   textInput: { 
     height: 54, 

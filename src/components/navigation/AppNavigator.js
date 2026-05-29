@@ -60,7 +60,7 @@ export default function AppNavigator() {
         <Stack.Screen name="History" component={HistoryScreen} options={{ headerShown: false }} />
         
         {/* Pantalla del Perfil de Usuario */}
-        <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'My Profile' }} />
+        <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
         
       </Stack.Navigator>
     </NavigationContainer>

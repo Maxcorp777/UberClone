@@ -3,8 +3,11 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { API_URL } from '../navigation/Config' // Trae la IP centralizada
+
 import { LogBox } from 'react-native';
-// APRENDIZAJE: Ignora advertencias específicas de gestos del emulador que no rompen la app
+
+// Ignora advertencias específicas de gestos del emulador que no rompen la app
 LogBox.ignoreLogs(['Unsupported top-level event type']);
 
 export default function RegisterScreen({ navigation }) {
@@ -15,18 +18,17 @@ export default function RegisterScreen({ navigation }) {
   const [gender, setGender] = useState('other'); 
   const [language, setLanguage] = useState('en');
 
-  const API_URL = 'http://192.168.1.73:5000/api/auth/register';
 
 const handleRegister = async () => {
     // 1. Validar campos
     if (!fullName || !email || !password || !phoneNumber) {
-      Alert.alert('Required Fields', 'Please fill in all fields.');
+      Alert.alert('Campos Requeridos', 'Te faltan campos por llenar');
       return;
     }
 
     try {
       // 2. Petición HTTP
-      const response = await fetch(API_URL, {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -41,16 +43,16 @@ const handleRegister = async () => {
         // Guardar sesión local
         await AsyncStorage.setItem('userId', data._id);
         
-        Alert.alert('Welcome', 'Account created successfully!');
+        Alert.alert('Bienvenido', 'Cuenta creada con exitos!');
         
         // Navegar usando la ruta exacta de tu AppNavigator
         navigation.replace('SKIP.com');
       } else {
-        Alert.alert('Registration Failed', data.message || 'Check your fields.');
+        Alert.alert('Registro Fallido', data.message || 'Revisa los campos');
       }
     } catch (error) {
       console.log("❌ ERROR:", error);
-      Alert.alert('Network Error', 'Cannot connect to server.');
+      Alert.alert('Network Error', 'No eres tu, somos nosotros [Error en el server]');
     }
   };
 
@@ -64,33 +66,33 @@ const handleRegister = async () => {
         {/* Header de la App con la marca e identidad */}
         <View style={styles.headerContainer}>
           <Text style={styles.brandTitle}>SKIP.com</Text>
-          <Text style={styles.title}>Let's get started</Text>
-          <Text style={styles.subtitle}>Create an account to unlock rides and seamless payments.</Text>
+          <Text style={styles.title}>Vamos a comenzar</Text>
+          <Text style={styles.subtitle}>Crea tu cuenta para tener total acceso a SKIP</Text>
         </View>
 
         {/* Formulario de Inputs */}
         <View style={styles.formContainer}>
-          <Text style={styles.inputLabel}>Full Name</Text>
+          <Text style={styles.inputLabel}>Nombre Completo</Text>
           <TextInput 
             style={styles.input} 
-            placeholder="e.g. John Doe" 
+            placeholder="e.j. John Doe" 
             placeholderTextColor="#A0A0A0"
             onChangeText={setFullName} 
             value={fullName}
             maxLength={50}
           />
 
-          <Text style={styles.inputLabel}>Phone Number</Text>
+          <Text style={styles.inputLabel}>Telefono</Text>
           <TextInput 
             style={styles.input} 
-            placeholder="e.g. +57 300 123 4567" 
+            placeholder="e.j. +57 300 123 4567" 
             placeholderTextColor="#A0A0A0"
             keyboardType="phone-pad"
             onChangeText={setPhoneNumber} 
             value={phoneNumber}
           />
 
-          <Text style={styles.inputLabel}>Email Address</Text>
+          <Text style={styles.inputLabel}>Email Personal</Text>
           <TextInput 
             style={styles.input} 
             placeholder="name@example.com" 
@@ -101,10 +103,10 @@ const handleRegister = async () => {
             value={email}
           />
 
-          <Text style={styles.inputLabel}>Password</Text>
+          <Text style={styles.inputLabel}>Contraseña</Text>
           <TextInput 
             style={styles.input} 
-            placeholder="Minimum 6 characters" 
+            placeholder="Minimo 6 caracteres" 
             placeholderTextColor="#A0A0A0"
             secureTextEntry 
             onChangeText={setPassword} 
@@ -114,7 +116,7 @@ const handleRegister = async () => {
 
         {/* Botón de Acción Principal en Morado */}
         <TouchableOpacity style={styles.button} onPress={handleRegister} activeOpacity={0.8}>
-          <Text style={styles.buttonText}>Sign Up</Text>
+          <Text style={styles.buttonText}>Registrate Aqui</Text>
         </TouchableOpacity>
         <TouchableOpacity 
           onPress={() => navigation.navigate('Login')} 
@@ -229,6 +231,6 @@ const styles = StyleSheet.create({
   },
   loginLinkBold: {
     fontWeight: 'bold',
-    color: '#6D28D9', // El morado eléctrico oficial de SKIP
+    color: '#6D28D9',
   },
 });

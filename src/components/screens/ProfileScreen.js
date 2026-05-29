@@ -3,6 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, ActivityIndicator, Alert, TouchableOpacity, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { API_URL } from '../navigation/Config' // Trae la IP centralizada
+
+
 export default function ProfileScreen({ route, navigation }) {
   // COMENTARIO DIDÁCTICO: Se extrae el id enviado por los parámetros de navegación o se usa el fallback de pruebas
   const { userId } = route.params || { userId: '6a1652bceaffc479b0e7ca69' };
@@ -10,13 +13,11 @@ export default function ProfileScreen({ route, navigation }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const API_URL = `http://192.168.1.73:5000/api/users/profile/${userId}`;
-
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         // Petición HTTP GET para obtener la información del perfil por ID
-        const response = await fetch(API_URL);
+        const response = await fetch(`${API_URL}/users/profile/${userId}`);
         const data = await response.json();
 
         if (response.ok) {
@@ -35,15 +36,15 @@ export default function ProfileScreen({ route, navigation }) {
     fetchUserProfile();
   }, [userId]);
 
-// COMENTARIO DIDÁCTICO: Limpia la sesión y reinicia el estado del navegador de forma segura
+// Limpia la sesión y reinicia el estado del navegador de forma segura
   const handleLogout = async () => {
     try {
       // 1. Borramos el ID del almacenamiento local
       await AsyncStorage.removeItem('userId');
       
-      Alert.alert('Logged Out', 'Your session has been closed successfully.');
+      Alert.alert('Ya cerramos su sesion', 'Todo correcto ya has salido de tu cuenta');
       
-      // 2. Reseteamos el estado de todo el navegador, obligándolo a recalcular las rutas desde cero
+      // Reseteamos el estado de todo el navegador, haciendo que recalcule las rutas desde cero
       navigation.reset({
         index: 0,
         routes: [{ name: 'Register' }], // Al resetear, vuelve a leer el condicional y activa el Registro
@@ -51,7 +52,7 @@ export default function ProfileScreen({ route, navigation }) {
       
     } catch (error) {
       console.error('Error clearing session:', error);
-      Alert.alert('Error', 'Could not clear the session.');
+      Alert.alert('Error', 'No hemos podido cerrar tu sesion');
     }
   };
 

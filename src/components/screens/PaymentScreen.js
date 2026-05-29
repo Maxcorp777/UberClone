@@ -6,17 +6,19 @@ import { CardField } from '@stripe/stripe-react-native';
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// 🟢 SOLUCIÓN 1: Inyectamos { navigation } para poder saltar de pantalla
+import { API_URL } from '../navigation/Config' // Trae la IP centralizada
+
+
 export default function PaymentScreen({ navigation }) {
-  // 🏢 ESTADO: Almacena si el usuario completó la estructura correcta de la tarjeta
+  // Almacena si el usuario completó la estructura correcta de la tarjeta
   const [cardDetails, setCardDetails] = useState(null);
 
-  // 📦 REDUX: Consumimos el estado global del viaje actual ("trip")
+  // Consumimos el estado global del viaje actual ("trip")
   const trip = useSelector(state => state.trip);
 
   const finalizarViaje = async () => {
     try {
-      // 1. Recuperamos el ID del usuario que está logueado en la app
+      // Recuperamos el ID del usuario que está logueado en la app
       const idUsuario = await AsyncStorage.getItem('userId');
       
       if (!idUsuario) {
@@ -25,18 +27,18 @@ export default function PaymentScreen({ navigation }) {
         return;
       }
 
-      // 2. Armamos el paquete usando los datos REALES de Redux
+      // Armamos el paquete usando los datos REALES de Redux
       const datosDelViaje = {
         userId: idUsuario, 
         distance: trip.distance || "5.8 km", // Toma lo de redux o deja un backup por si acaso
         duration: trip.duration || "14 mins",
-        cost: trip.price || 13500            // 🟢 SOLUCIÓN 2: Costo real mapeado desde Redux
+        cost: trip.price || 13500            //SOLUCIÓN 2: Costo real mapeado desde Redux
       };
 
       console.log("📤 Enviando viaje a la DB...", datosDelViaje);
 
-      // 3. Hacemos la petición POST al backend
-      const response = await fetch('http://192.168.1.73:5000/api/trips/complete', {
+      // Hacemos la petición POST al backend
+      const response = await fetch(`${API_URL}/trips/complete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datosDelViaje)
@@ -45,11 +47,11 @@ export default function PaymentScreen({ navigation }) {
       const resultado = await response.json();
       console.log("🟢 Servidor respondió:", resultado);
 
-      // 4. Si guardó bien en Atlas, disparamos la alerta de éxito y navegamos
+      // Si guardo bien en Atlas, sacamos la alerta de éxito y navegamos
       if (response.status === 201) {
         Alert.alert(
-          'Transaction Approved',
-          `Your payment of ${datosDelViaje.cost.toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })} has been processed successfully. Enjoy your ride!`,
+          'Transferencia Aprobada',
+          `Tu Factura de ${datosDelViaje.cost.toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })}, A sido procesado con exito - GRACIAS POR ELEGIRNOS`,
           [
             { 
               text: 'OK', 
@@ -69,7 +71,7 @@ export default function PaymentScreen({ navigation }) {
     }
   };
 
-  // 🚀 FUNCIÓN: Valida la tarjeta ficticia e inicia el flujo seguro de facturación
+  // Valida la tarjeta ficticia e inicia el flujo seguro de facturación
   const handlePayment = async () => {
     // Bloquea el proceso si faltan números, el CVV o la fecha expiró
     if (!cardDetails?.complete) {
@@ -87,13 +89,13 @@ export default function PaymentScreen({ navigation }) {
   return (
     <View style={styles.container}>
       
-      {/* 🏛️ ENCABEZADO DE CHECKOUT MINIMALISTA */}
+      {/* ENCABEZADO DE CHECKOUT MINIMALISTA */}
       <View style={styles.headerBlock}>
         <Text style={styles.title}>Secure Checkout</Text>
         <Text style={styles.subtitle}>SKIP.com • Encrypted Gateway</Text>
       </View>
 
-      {/* 💳 TARJETA INVOICE (Resumen del cobro total) */}
+      {/* TARJETA INVOICE (Resumen del cobro total) */}
       <View style={styles.invoiceCard}>
         <Text style={styles.invoiceLabelTitle}>Total Amount to Pay</Text>
         <Text style={styles.priceText}>
@@ -101,7 +103,7 @@ export default function PaymentScreen({ navigation }) {
         </Text>
       </View>
 
-      {/* 🔒 CONFIGURACIÓN CLARA DEL COMPONENTE DE STRIPE */}
+      {/* CONFIGURACIÓN CLARA DEL COMPONENTE DE STRIPE */}
       <Text style={styles.inputSectionLabel}>Credit or Debit Card</Text>
       <CardField
         postalCodeEnabled={false}

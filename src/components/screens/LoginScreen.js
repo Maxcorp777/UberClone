@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { API_URL } from '../navigation/Config'// Trae la IP centralizada
+
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -9,14 +11,15 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Campos incompletos', 'Por favor llena todos los datos.');
+      Alert.alert('Eres tu, no nosotros', 'Por favor llena todos los datos.');
       return;
     }
 
     setLoading(true);
     try {
       // Petición al endpoint que acabamos de crear (Modifica la IP por la tuya si cambió)
-      const response = await fetch('http://192.168.1.73:5000/api/auth/login', {
+      
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -25,7 +28,7 @@ export default function LoginScreen({ navigation }) {
       const data = await response.json();
 
       if (response.status === 200) {
-        // 🟢 AQUÍ ESTÁ LA MAGIA: Guardamos el ID del usuario en el celular
+        //Guardamos el ID del usuario en el celular
         await AsyncStorage.setItem('userId', data.user.id);
         await AsyncStorage.setItem('userName', data.user.fullName);
 
